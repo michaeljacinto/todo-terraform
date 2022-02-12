@@ -1,0 +1,78 @@
+CODE_DIR=/home/todo_app
+ENV_FILE=.env
+ENV_FILE_PATH=$CODE_DIR/$ENV_FILE
+DOCKER_COMPOSE_PATH=$CODE_DIR/docker-compose.yml
+LOG_FILE="/var/log/web_app.log"
+
+log() {
+    local message="$1"
+    echo "[$(date)] $${message}" | tee -a "$LOG_FILE"
+}
+
+error_exit() {
+	log "$1" 1>&2
+	exit 1
+}
+
+update_ubuntu() {
+    log "Updating ubuntu.."
+    apt-get update -y && apt-get upgrade -y
+}
+
+install_docker() {
+    log "Installing docker.."
+    curl -fsSL https://get.docker.com -o get-docker.sh
+    sh get-docker.sh
+}
+
+install_docker_compose() {
+    log "Installing docker compose.."
+    curl -L "https://github.com/docker/compose/releases/download/1.25.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    chmod +x /usr/local/bin/docker-compose
+}
+
+configure_code() {
+    log "Configuring code.."
+    git clone https://github.com/michaeljacinto/docker-compose $CODE_DIR
+    cp $CODE_DIR/.env.sample $ENV_FILE_PATH
+
+    # Edit .env file
+    sed -i 's/MYSQL_HOST=/MYSQL_HOST=${mysql_host}/' $ENV_FILE_PATH
+    sed -i 's/MYSQL_USER=/MYSQL_USER=${mysql_user}/' $ENV_FILE_PATH
+    sed -i 's/MYSQL_PASSWORD=/MYSQL_PASSWORD=${mysql_password}/' $ENV_FILE_PATH
+    sed -i 's/MYSQL_ROOT_PASSWORD=/MYSQL_ROOT_PASSWORD=${mysql_root_password}/' $ENV_FILE_PATH
+    sed -i 's/MYSQL_DATABASE=/MYSQL_DATABASE=${mysql_database}/' $ENV_FILE_PATH
+
+    # Edit docker-compose.yml to match .env file
+    sed -i 's/MYSQL_HOST=/MYSQL_HOST=${mysql_host}/' $DOCKER_COMPOSE_PATH
+    sed -i 's/MYSQL_USER=/MYSQL_USER=${mysql_user}/' $DOCKER_COMPOSE_PATH
+    sed -i 's/MYSQL_PASSWORD=/MYSQL_PASSWORD=${mysql_password}/' $DOCKER_COMPOSE_PATH
+    sed -i 's/MYSQL_DATABASE=/MYSQL_DATABASE=${mysql_database}/' $DOCKER_COMPOSE_PATH
+}
+
+run_docker_compose() {
+    log "Running docker-compose.."
+    cd $CODE_DIR
+    docker-compose up -d --build
+}
+
+# Create log file
+if [[ ! -f "$LOG_FILE" ]]
+then
+    touch "$LOG_FILE"
+    chmod +644 "$LOG_FILE"
+fi
+
+exec &>>$LOG_FILE
+
+update_ubuntu
+
+install_docker
+
+install_docker_compose
+
+configure_code
+
+run_docker_compose
+
+log "Provisioning complete!"
