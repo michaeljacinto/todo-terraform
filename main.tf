@@ -50,6 +50,20 @@ resource "azurerm_network_security_rule" "nsg-80" {
   network_security_group_name = azurerm_network_security_group.todo-nsg.name
 }
 
+resource "azurerm_network_security_rule" "nsg-443" {
+  name                        = "HTTPS"
+  priority                    = 102
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "443"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_resource_group.todo-app-rg.name
+  network_security_group_name = azurerm_network_security_group.todo-nsg.name
+}
+
 resource "azurerm_network_security_rule" "nsg-ssh" {
   name                        = "SSH"
   priority                    = 101
@@ -135,7 +149,9 @@ resource "azurerm_virtual_machine_extension" "centos-std-provisioning" {
   mysql_user          = var.mysql_user,
   mysql_password      = var.mysql_password,
   mysql_root_password = var.mysql_root_password,
-  mysql_database      = var.mysql_database
+  mysql_database      = var.mysql_database,
+  email               = var.email,
+  domain              = azurerm_public_ip.todo-ip.fqdn
 })
 )
 }"

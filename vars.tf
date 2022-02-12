@@ -3,27 +3,32 @@ variable "admin_password" {
   default     = "1234!Password"
 }
 
+variable "email" {
+  description = "Email for SSL"
+  default     = "example@email.com"
+}
+
 variable "mysql_host" {
-  description = "Password to access Linux VM"
+  description = "MySQL Host"
   default     = "db"
 }
 
 variable "mysql_user" {
-  description = "Password to access Linux VM"
+  description = "MySQL User"
   default     = "backend"
 }
 
 variable "mysql_password" {
-  description = "Password to access Linux VM"
+  description = "MySQL Password"
   default     = "password1234"
 }
 
 variable "mysql_root_password" {
-  description = "Password to access Linux VM"
+  description = "MySQL Root Password"
   default     = "password1234"
 }
 
 variable "mysql_database" {
-  description = "Password to access Linux VM"
+  description = "MySQL Database name"
   default     = "tutorials"
 }

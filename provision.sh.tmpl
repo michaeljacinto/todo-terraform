@@ -56,6 +56,12 @@ run_docker_compose() {
     docker-compose up -d --build
 }
 
+install_ssl() {
+    log "Installing SSL"
+    apt-get install certbot python-certbot-nginx -y
+    certbot run -n --nginx --agree-tos -d ${domain} -m ${email} --redirect
+}
+
 # Create log file
 if [[ ! -f "$LOG_FILE" ]]
 then
@@ -63,6 +69,7 @@ then
     chmod +644 "$LOG_FILE"
 fi
 
+log "$(date)"
 exec &>>$LOG_FILE
 
 update_ubuntu
@@ -74,5 +81,7 @@ install_docker_compose
 configure_code
 
 run_docker_compose
+
+install_ssl
 
 log "Provisioning complete!"
