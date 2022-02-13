@@ -110,7 +110,7 @@ resource "azurerm_linux_virtual_machine" "todo-vm" {
   resource_group_name             = azurerm_resource_group.todo-app-rg.name
   location                        = azurerm_resource_group.todo-app-rg.location
   size                            = "Standard_DS1_v2"
-  admin_username                  = "azureuser"
+  admin_username                  = var.admin_username
   disable_password_authentication = false
   admin_password                  = var.admin_password
   network_interface_ids = [

@@ -70,7 +70,6 @@ then
 fi
 
 log "$(date)"
-exec &>>$LOG_FILE
 
 update_ubuntu
 
@@ -80,8 +79,8 @@ install_docker_compose
 
 configure_code
 
-run_docker_compose
+run_docker_compose 2>&1 | tee $LOG_FILE
 
-install_ssl
+# install_ssl
 
 log "Provisioning complete!"

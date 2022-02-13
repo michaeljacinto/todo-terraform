@@ -1,3 +1,8 @@
+variable "admin_username" {
+  description = "Username to access Linux VM"
+  default     = "azureuser"
+}
+
 variable "admin_password" {
   description = "Password to access Linux VM"
   default     = "1234!Password"
