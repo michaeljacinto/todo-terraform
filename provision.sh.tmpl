@@ -59,7 +59,7 @@ run_docker_compose() {
 
 install_ssl() {
     log "Installing SSL.."
-    docker exec -it todo_app_frontend_1 certbot run -n --nginx --agree-tos -d ${domain} -m ${email} --redirect
+    docker exec todo_app_frontend_1 certbot run -n --nginx --agree-tos -d ${domain} -m ${email} --redirect
 }
 
 # Create log file
