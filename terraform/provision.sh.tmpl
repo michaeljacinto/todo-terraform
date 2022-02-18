@@ -71,6 +71,9 @@ fi
 
 log "$(date)"
 
+set -x
+exec &>>$LOG_FILE
+
 update_ubuntu
 
 install_docker
